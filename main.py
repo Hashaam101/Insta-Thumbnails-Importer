@@ -15,14 +15,9 @@ from tqdm import tqdm
 # ---------- CONFIG ----------
 OUTPUT_DIR = "Images/insta"       # Folder to save images
 OUTPUT_FILE = "instagram_posts.ts" # Output file
-URLS = [
-    "https://www.instagram.com/p/DNJTIZQvKoZ/",
-    "https://www.instagram.com/reel/DNFY5NROp1j/",
-    "https://www.instagram.com/reel/DNFSD9ltxhX/",
-    "https://www.instagram.com/p/DMRqFkduaSP/",
-    "https://www.instagram.com/p/DF_djLQMMIx/",
-    "https://www.instagram.com/p/DBpt0nxvK-1/"
-]
+URLS = []
+with open("import-URLs.txt", "r") as f:
+    URLS = [line.strip() for line in f.readlines()]
 # ----------------------------
 
 
