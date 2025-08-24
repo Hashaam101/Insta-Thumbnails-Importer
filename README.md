@@ -25,12 +25,17 @@ Python script to download Instagram post thumbnails and reels, convert images to
 pip install -r requirements.txt
 ```
 
+
 ## Usage
-1. Edit the `URLS` list in `main.py` to add your Instagram post/reel URLs.
+1. Add your Instagram post/reel URLs to `import-URLs.txt`, one per line. Example:
+	```
+	https://www.instagram.com/p/DNJTIZQvKoZ/
+	https://www.instagram.com/reel/DNFY5NROp1j/
+	```
 2. Run the script:
-```bash
-python main.py
-```
+	```bash
+	python main.py
+	```
 3. Find the converted images/gifs in the `Images/insta/` folder and metadata in `instagram_posts.ts`.
 
 ## Output
