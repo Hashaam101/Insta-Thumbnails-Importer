@@ -1,0 +1,5 @@
+instaloader
+opencv-python
+imageio
+requests
+tqdm
