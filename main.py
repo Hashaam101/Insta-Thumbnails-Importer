@@ -9,6 +9,7 @@ import contextlib
 import os
 import cv2
 import imageio
+from PIL import Image
 import requests
 from tqdm import tqdm
 
@@ -80,19 +81,35 @@ for idx, url in enumerate(tqdm(URLS, desc="Processing URLs", colour="green"), st
                         vid = cv2.VideoCapture(video_path)
                         frames = []
                         fps = vid.get(cv2.CAP_PROP_FPS)
-                        max_frames = int(fps * 5) if fps > 0 else 50  # 5 seconds or fallback 50 frames
+                        max_frames = int(fps * 3) if fps > 0 else 30  # 3 seconds or fallback 30 frames
                         frame_count = int(vid.get(cv2.CAP_PROP_FRAME_COUNT))
                         with tqdm(total=min(frame_count, max_frames), desc=f"Converting Reel {idx} to GIF", colour="magenta") as pbar:
                             success, frame = vid.read()
                             count = 0
                             while success and count < max_frames:
                                 rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                                frames.append(rgb_frame)
+                                # Resize to width 320px, keep aspect ratio
+                                img_pil = Image.fromarray(rgb_frame)
+                                w, h = img_pil.size
+                                new_w = 320
+                                new_h = int(h * (new_w / w))
+                                img_pil = img_pil.resize((new_w, new_h), Image.LANCZOS)
+                                # Reduce color palette to 32 colors for compression
+                                img_pil = img_pil.convert('P', palette=Image.ADAPTIVE, colors=32)
+                                frames.append(img_pil)
                                 success, frame = vid.read()
                                 count += 1
                                 pbar.update(1)
                         vid.release()
-                        imageio.mimsave(gif_path, frames, format='GIF', duration=0.05, loop=0)
+                        # Save GIF with more compression: lower fps (duration=80ms), optimize, reduced colors, looped
+                        frames[0].save(
+                            gif_path,
+                            save_all=True,
+                            append_images=frames[1:],
+                            duration=80,
+                            loop=0,
+                            optimize=True
+                        )
                         os.remove(video_path)
                         image_path = f"/{OUTPUT_DIR}/{idx}.gif"
                     except Exception:
